@@ -1,0 +1,166 @@
+.header {
+  position: relative;
+  padding-block: 2rem;
+}
+
+.inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo {
+  display: inline-flex;
+  flex-shrink: 0;
+}
+
+.menuButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.menuIcon,
+.menuIcon::before,
+.menuIcon::after {
+  display: block;
+  width: 1.5rem;
+  height: 3px;
+  border-radius: 999px;
+  background-color: var(--color-gray-500);
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.menuIcon {
+  position: relative;
+}
+
+.menuIcon::before,
+.menuIcon::after {
+  content: '';
+  position: absolute;
+  left: 0;
+}
+
+.menuIcon::before {
+  top: -0.5rem;
+}
+
+.menuIcon::after {
+  top: 0.5rem;
+}
+
+.menuButton[aria-expanded='true'] .menuIcon {
+  background-color: transparent;
+}
+
+.menuButton[aria-expanded='true'] .menuIcon::before {
+  top: 0;
+  transform: rotate(45deg);
+}
+
+.menuButton[aria-expanded='true'] .menuIcon::after {
+  top: 0;
+  transform: rotate(-45deg);
+}
+
+.nav {
+  display: none;
+}
+
+.navOpen {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  position: absolute;
+  inset: 5.5rem 1.5rem auto;
+  padding: 2rem;
+  border-radius: 0.75rem;
+  background-color: var(--color-purple-950);
+  box-shadow: 0 1.25rem 2.5rem rgba(0, 0, 0, 0.15);
+  z-index: 10;
+}
+
+.navOpen .navLinks a,
+.navOpen .login {
+  color: var(--color-white);
+}
+
+.navOpen .navLinks a:hover,
+.navOpen .login:hover {
+  color: var(--color-blue-400);
+}
+
+.navLinks {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  text-align: center;
+}
+
+.navLinks a {
+  font-weight: 700;
+  color: var(--color-gray-500);
+  transition: color 0.2s ease;
+}
+
+.navLinks a:hover {
+  color: var(--color-gray-900);
+}
+
+.authLinks {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+.login {
+  font-weight: 700;
+  color: var(--color-gray-500);
+  transition: color 0.2s ease;
+}
+
+.login:hover {
+  color: var(--color-gray-900);
+}
+
+@media (min-width: 48rem) {
+  .menuButton {
+    display: none;
+  }
+
+  .nav {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    margin-left: auto;
+  }
+
+  .navLinks {
+    flex-direction: row;
+    gap: 2rem;
+  }
+
+  .authLinks {
+    flex-direction: row;
+    gap: 2rem;
+    align-items: center;
+  }
+}
+
+@media (min-width: 64rem) {
+  .nav {
+    gap: 2.5rem;
+  }
+
+  .navLinks {
+    gap: 2.5rem;
+  }
+}
