@@ -1,5 +1,5 @@
 .section {
-  padding-block: 4rem 5rem;
+  padding-block: 0 5rem;
   background-color: var(--color-gray-100);
 }
 
@@ -42,7 +42,7 @@
 
 @media (min-width: 64rem) {
   .section {
-    padding-block: 6rem 8rem;
+    padding-block: 0 8rem;
   }
 
   .header {
