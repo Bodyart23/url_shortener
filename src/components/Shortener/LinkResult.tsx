@@ -37,6 +37,7 @@ function LinkResult({ link }: LinkResultProps) {
           type="button"
           className={`btn ${copied ? 'btn--copied' : 'btn--primary'} ${styles.copy}`}
           onClick={handleCopy}
+          aria-label={copied ? 'Short link copied' : 'Copy short link'}
         >
           {copied ? 'Copied!' : 'Copy'}
         </button>

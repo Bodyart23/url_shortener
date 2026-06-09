@@ -12,10 +12,10 @@ function Cta() {
 
       <div className={`container ${styles.inner}`}>
         <h2 id="cta-heading" className={styles.heading}>
-          Boost your links today
+          Ready to share a shorter link?
         </h2>
         <a href="#shorten" className="btn btn--primary btn--large">
-          Get Started
+          Shorten a link
         </a>
       </div>
     </section>

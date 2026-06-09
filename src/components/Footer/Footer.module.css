@@ -14,17 +14,23 @@
   filter: brightness(0) invert(1);
 }
 
-@media (min-width: 48rem) {
-  .inner {
-    display: grid;
-    grid-template-columns: auto 1fr auto;
-    align-items: start;
-    gap: 2rem 3rem;
-  }
+.tagline {
+  max-width: 22rem;
+  text-align: center;
+  font-size: 0.9375rem;
+  color: var(--color-gray-400);
 }
 
-@media (min-width: 64rem) {
+@media (min-width: 48rem) {
   .inner {
-    gap: 4rem;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    text-align: left;
+  }
+
+  .tagline {
+    max-width: 28rem;
+    text-align: right;
   }
 }

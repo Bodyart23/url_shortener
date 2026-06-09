@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react';
 import { shortenUrl } from '../../api/shortenUrl';
 import type { ShortLink } from '../../types';
+import { validateUrl } from '../../utils/validateUrl';
 import LinkResult from './LinkResult';
 import styles from './Shortener.module.css';
 
@@ -17,10 +18,10 @@ function Shortener({ links, onAddLink }: ShortenerProps) {
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const trimmedUrl = url.trim();
+    const validation = validateUrl(url);
 
-    if (!trimmedUrl) {
-      setError('Please add a link');
+    if (!validation.valid) {
+      setError(validation.message);
       return;
     }
 
@@ -28,11 +29,11 @@ function Shortener({ links, onAddLink }: ShortenerProps) {
     setIsLoading(true);
 
     try {
-      const shortUrl = await shortenUrl(trimmedUrl);
+      const shortUrl = await shortenUrl(validation.url);
 
       onAddLink({
         id: crypto.randomUUID(),
-        originalUrl: trimmedUrl,
+        originalUrl: validation.url,
         shortUrl,
       });
 
@@ -47,7 +48,7 @@ function Shortener({ links, onAddLink }: ShortenerProps) {
   return (
     <section id="shorten" className={styles.section} aria-labelledby="shorten-heading">
       <h2 id="shorten-heading" className="visually-hidden">
-        Shorten a link
+        Shorten your link
       </h2>
 
       <div className={styles.wrapper}>
@@ -56,14 +57,14 @@ function Shortener({ links, onAddLink }: ShortenerProps) {
           <form className={styles.form} onSubmit={handleSubmit} noValidate>
             <div className={styles.inputGroup}>
               <label htmlFor="url-input" className="visually-hidden">
-                URL to shorten
+                Paste the long URL you want to shorten
               </label>
               <input
                 id="url-input"
                 type="url"
                 name="url"
                 value={url}
-                placeholder="Shorten a link here..."
+                placeholder="Paste your long link here..."
                 className={`${styles.input} ${error ? styles.inputError : ''}`}
                 aria-invalid={Boolean(error)}
                 aria-describedby={error ? 'url-error' : undefined}
@@ -89,7 +90,11 @@ function Shortener({ links, onAddLink }: ShortenerProps) {
           </form>
 
           {links.length > 0 && (
-            <ul className={styles.results} aria-label="Shortened links">
+            <ul
+              className={styles.results}
+              aria-label="Your Shortly links"
+              tabIndex={links.length > 5 ? 0 : undefined}
+            >
               {links.map((link) => (
                 <LinkResult key={link.id} link={link} />
               ))}

@@ -10,18 +10,19 @@ function Hero() {
             More than just shorter links
           </h1>
           <p className={styles.description}>
-            Build your brand&apos;s recognition and get detailed insights on how
-            your links are performing.
+            Shortly turns long URLs into compact links you can copy in one click,
+            then creates QR codes ready to share on social posts, emails, and
+            print materials.
           </p>
           <a href="#shorten" className="btn btn--primary btn--large">
-            Get Started
+            Shorten a link
           </a>
         </div>
 
         <div className={styles.illustration}>
           <img
             src={illustration}
-            alt="Person working at a desk with a computer"
+            alt="Illustration of someone shortening and sharing links at a desk"
             width={733}
             height={482}
           />

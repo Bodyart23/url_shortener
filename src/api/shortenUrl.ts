@@ -14,14 +14,16 @@ export async function shortenUrl(url: string): Promise<string> {
     body: new URLSearchParams({ url: url.trim() }).toString(),
   });
 
-  if (!response.ok) {
-    throw new Error('Unable to shorten the link. Please try again.');
+  let data: ShortenResponse = {};
+
+  try {
+    data = await response.json();
+  } catch {
+    throw new Error('Shortly could not shorten this link. Please try again.');
   }
 
-  const data: ShortenResponse = await response.json();
-
-  if (data.error || !data.result_url) {
-    throw new Error(data.error ?? 'Unable to shorten the link. Please try again.');
+  if (!response.ok || data.error || !data.result_url) {
+    throw new Error(data.error ?? 'Shortly could not shorten this link. Please try again.');
   }
 
   return data.result_url;
