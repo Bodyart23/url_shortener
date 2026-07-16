@@ -1,5 +1,8 @@
-import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { validateUrl } from '../lib/validateUrl';
+
+export const config = {
+  runtime: 'edge',
+};
 
 const CLEANURI_ENDPOINT = 'https://cleanuri.com/api/v1/shorten';
 const REQUEST_TIMEOUT_MS = 10_000;
@@ -9,42 +12,40 @@ interface CleanUriResponse {
   error?: string;
 }
 
-function parseUrlFromBody(req: VercelRequest): string | undefined {
-  if (typeof req.body === 'string') {
-    return new URLSearchParams(req.body).get('url') ?? undefined;
-  }
-
-  if (req.body && typeof req.body === 'object' && 'url' in req.body) {
-    const { url } = req.body as { url?: unknown };
-    return typeof url === 'string' ? url : undefined;
-  }
-
-  return undefined;
+function json(status: number, body: unknown, headers?: HeadersInit): Response {
+  return Response.json(body, { status, headers });
 }
 
-export default async function handler(req: VercelRequest, res: VercelResponse) {
-  if (req.method === 'OPTIONS') {
-    return res.status(204).end();
+export default async function handler(request: Request): Promise<Response> {
+  if (request.method === 'OPTIONS') {
+    return new Response(null, { status: 204 });
   }
 
-  if (req.method !== 'POST') {
-    res.setHeader('Allow', 'POST');
-    return res.status(405).json({ error: 'Method not allowed' });
+  if (request.method !== 'POST') {
+    return json(405, { error: 'Method not allowed' }, { Allow: 'POST' });
   }
 
-  const contentType = req.headers['content-type'] ?? '';
+  const contentType = request.headers.get('content-type') ?? '';
   if (!contentType.includes('application/x-www-form-urlencoded')) {
-    return res.status(415).json({ error: 'Unsupported content type' });
+    return json(415, { error: 'Unsupported content type' });
   }
 
-  const rawUrl = parseUrlFromBody(req);
+  let rawUrl: string | undefined;
+
+  try {
+    const rawBody = await request.text();
+    rawUrl = new URLSearchParams(rawBody).get('url') ?? undefined;
+  } catch {
+    return json(400, { error: 'Please add a link' });
+  }
+
   if (!rawUrl) {
-    return res.status(400).json({ error: 'Please add a link' });
+    return json(400, { error: 'Please add a link' });
   }
 
   const validation = validateUrl(rawUrl);
   if (!validation.valid) {
-    return res.status(400).json({ error: validation.message });
+    return json(400, { error: validation.message });
   }
 
   try {
@@ -61,23 +62,23 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     clearTimeout(timeout);
 
     if (!response.ok) {
-      return res
-        .status(502)
-        .json({ error: 'Shortly could not shorten this link. Please try again.' });
+      return json(502, {
+        error: 'Shortly could not shorten this link. Please try again.',
+      });
     }
 
-    const data: CleanUriResponse = await response.json();
+    const data = (await response.json()) as CleanUriResponse;
 
     if (data.error || !data.result_url) {
-      return res
-        .status(502)
-        .json({ error: 'Shortly could not shorten this link. Please try again.' });
+      return json(502, {
+        error: 'Shortly could not shorten this link. Please try again.',
+      });
     }
 
-    return res.status(200).json({ result_url: data.result_url });
+    return json(200, { result_url: data.result_url });
   } catch {
-    return res
-      .status(502)
-      .json({ error: 'Shortly could not shorten this link. Please try again.' });
+    return json(502, {
+      error: 'Shortly could not shorten this link. Please try again.',
+    });
   }
 }
